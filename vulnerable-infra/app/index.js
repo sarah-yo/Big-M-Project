@@ -28,11 +28,9 @@ exports.handler = async (event) => {
     const userDataPath = `/tmp/${userId}.json`;
     fs.writeFileSync(userDataPath, JSON.stringify(event));
     
-    // VULNERABILITY: Command injection
-    const { exec } = require('child_process');
-    exec(`echo ${event.data}`, (error, stdout, stderr) => {
-        console.log(stdout);
-    });
+    // Avoid shell execution for user-controlled input.
+    const submittedData = typeof event.data === 'string' ? event.data : '';
+    console.log(submittedData);
     
     return {
         statusCode: 200,
